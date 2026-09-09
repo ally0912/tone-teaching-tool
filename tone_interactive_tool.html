@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提示語口氣教學工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .task-selector {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .task-selector label {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .task-selector select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .tones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .tone-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .tone-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+        }
+        
+        .tone-header {
+            padding: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .tone-body {
+            padding: 20px;
+        }
+        
+        .tone-body p {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .tone-feature {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f5f5f5;
+            border-left: 4px solid;
+            border-radius: 4px;
+        }
+        
+        .tone-example {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 0.95em;
+            color: #333;
+            border-left: 3px solid;
+            font-style: italic;
+        }
+        
+        /* 各口氣的顏色配置 */
+        .formal {
+            --color: #1e40af;
+            --light-bg: #dbeafe;
+        }
+        
+        .warm {
+            --color: #dc2626;
+            --light-bg: #fee2e2;
+        }
+        
+        .cautious {
+            --color: #7c3aed;
+            --light-bg: #ede9fe;
+        }
+        
+        .humor {
+            --color: #d97706;
+            --light-bg: #fef3c7;
+        }
+        
+        .technical {
+            --color: #059669;
+            --light-bg: #d1fae5;
+        }
+        
+        .coaching {
+            --color: #0891b2;
+            --light-bg: #cffafe;
+        }
+        
+        .warning {
+            --color: #dc2626;
+            --light-bg: #fee2e2;
+        }
+        
+        .tone-card.formal .tone-header {
+            background-color: #1e40af;
+        }
+        
+        .tone-card.warm .tone-header {
+            background-color: #dc2626;
+        }
+        
+        .tone-card.cautious .tone-header {
+            background-color: #7c3aed;
+        }
+        
+        .tone-card.humor .tone-header {
+            background-color: #d97706;
+        }
+        
+        .tone-card.technical .tone-header {
+            background-color: #059669;
+        }
+        
+        .tone-card.coaching .tone-header {
+            background-color: #0891b2;
+        }
+        
+        .tone-card.warning .tone-header {
+            background-color: #7f1d1d;
+        }
+        
+        .tone-feature {
+            border-color: var(--color);
+        }
+        
+        .tone-example {
+            border-color: var(--color);
+        }
+        
+        .comparison-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .comparison-table th {
+            background: #f3f4f6;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .comparison-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        .checklist {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        
+        .checklist h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        
+        .checklist-item label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            font-size: 0.95em;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .tones-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 提示語「口氣」教學工具</h1>
+            <p>同一個任務，不同口氣如何改變 AI 的輸出</p>
+        </div>
+        
+        <div class="task-selector">
+            <label for="taskSelect">選擇任務場景：</label>
+            <select id="taskSelect">
+                <option value="complaint">客訴回復信</option>
+                <option value="copywriting">商品介紹文案</option>
+                <option value="analysis">法務案件分析</option>
+                <option value="emergency">緊急停業公告</option>
+                <option value="motivation">年度激勵文案</option>
+            </select>
+        </div>
+        
+        <div class="tones-grid" id="tonesGrid"></div>
+        
+        <div class="comparison-section">
+            <h2>📊 7 種口氣對比表</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>口氣類型</th>
+                        <th>適用場景</th>
+                        <th>核心特徵</th>
+                        <th>禁止用語</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>正式專業型</strong></td>
+                        <td>商務、法務、學術</td>
+                        <td>敬語 + 複句 + 正式詞彙</td>
+                        <td>口語、不夠莊重</td>
+                    </tr>
+                    <tr>
+                        <td><strong>親切積極型</strong></td>
+                        <td>銷售、客服、推廣</td>
+                        <td>熱情 + 短句 + 驚嘆號</td>
+                        <td>冷漠、距離感</td>
+                    </tr>
+                    <tr>
+                        <td><strong>謹慎理性型</strong></td>
+                        <td>分析、評估、法務</td>
+                        <td>中立 + 條列 + 邏輯性</td>
+                        <td>絕對化、猜測</td>
+                    </tr>
+                    <tr>
+                        <td><strong>輕鬆幽默型</strong></td>
+                        <td>社群、內部、品牌</td>
+                        <td>梗 + 短句 + 自然</td>
+                        <td>冒犯、過度不專業</td>
+                    </tr>
+                    <tr>
+                        <td><strong>冷靜技術型</strong></td>
+                        <td>技術文檔、問題排查</td>
+                        <td>步驟 + 去感情 + 邏輯清</td>
+                        <td>模糊詞、情感詞</td>
+                    </tr>
+                    <tr>
+                        <td><strong>鼓勵教練型</strong></td>
+                        <td>教學、激勵、諮詢</td>
+                        <td>信心 + 陪伴 + 正面</td>
+                        <td>空洞雞湯、低估</td>
+                    </tr>
+                    <tr>
+                        <td><strong>嚴肅警告型</strong></td>
+                        <td>安全、紀律、危機</td>
+                        <td>直接 + 強調 + 後果</td>
+                        <td>開玩笑、弱化</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="checklist">
+            <h2>✅ 使用提示語時的 4 步檢查清單</h2>
+            <div class="checklist-item">
+                <input type="checkbox" id="step1">
+                <label for="step1"><strong>第 1 步：定義情景</strong> - 這是什麼場景？對象是誰？目的是什麼？</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="step2">
+                <label for="step2"><strong>第 2 步：選擇口氣</strong> - 7 種口氣中哪一種最適合？</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="step3">
+                <label for="step3"><strong>第 3 步：寫入提示語</strong> - 加入角色、口氣指引、參考句式</label>
+            </div>
+            <div class="checklist-item">
+                <input type="checkbox" id="step4">
+                <label for="step4"><strong>第 4 步：測試驗證</strong> - AI 產出符合口氣嗎？需要調整嗎？</label>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>💡 記住：好的口氣 = AI 更精準的理解與更符合需求的輸出</p>
+        </div>
+    </div>
+    
+    <script>
+        const taskData = {
+            complaint: {
+                title: "客訴回復信",
+                description: "客戶反映產品有瑕疵",
+                tones: {
+                    formal: "尊敬的客戶，感謝您提出寶貴意見。經查證，貴司反映之事項經確認為本公司責任。我們將按照服務條款第 XX 條進行補償…",
+                    warm: "親愛的客戶，真的超不好意思！我們立即為您排查問題，承諾 48 小時內給您完美解決方案。感謝你的耐心！",
+                    cautious: "經初步評估，根據服務條款第 5.2 條，此案件涉及以下責任範圍…後續將進行進一步查證…",
+                    humor: "各位夥伴，我們發現了小狀況，不過別擔心！我們已經出動最強的維修隊伍，預計今天就能搞定。",
+                    technical: "檢查步驟：1. 驗證購買日期 2. 檢查故障代碼 3. 進行硬體測試 4. 若確認產品瑕疵則進行更換…",
+                    coaching: "我看見你的困擾，真的很遺憾。不過放心，我們會一起解決這個問題。你的信任對我們很重要，讓我們證明我們值得信任。",
+                    warning: "【重要通知】經查實，該產品存在品質缺陷。所有購買者務必立即停用該產品，並於 7 日內聯繫我們進行免費更換。"
+                }
+            },
+            copywriting: {
+                title: "商品介紹文案",
+                description: "介紹一款新上市的無線充電器",
+                tones: {
+                    formal: "新型無線充電器採用先進技術，具備高效率、安全性能等特點。本產品符合國際認證標準，適合專業人士使用。",
+                    warm: "親愛的朋友，新款充電器來啦！不只充電快，設計也超美。相信你一定會愛上它！✨",
+                    cautious: "根據產品規格說明，該無線充電器支援 15W 快充，相容市面上大多數 Qi 認證設備。詳細相容清單請見附件。",
+                    humor: "再也不用跟充電線糾纏不清！這款充電器讓你自由自在，放上去就充電，完全解放雙手。",
+                    technical: "規格：輸入 5V/2A、輸出 15W、相容標準 Qi、轉換效率 >85%、工作溫度 0-40℃…",
+                    coaching: "你是不是也被充電線困擾過？我們懂！這款充電器就是為了改善你的生活而設計的。試試看，相信你會有全新的使用體驗。",
+                    warning: "【產品提醒】請勿將金屬物品放在充電盤上，以免造成短路。使用中若發現異熱、異味，應立即停用並聯繫客服。"
+                }
+            },
+            analysis: {
+                title: "法務案件分析",
+                description: "分析一起勞資糾紛案件",
+                tones: {
+                    formal: "經檢視相關文件，本案件涉及勞動基準法第 XX 條之規定。本公司應負部分責任，建議進行和解談判。",
+                    warm: "這個案件我們已經仔細看過了！別擔心，我們會積極協調，争取最好的結果。你的權益我們會維護！",
+                    cautious: "根據勞動基準法第 XX 條，經初步評估，本案件涉及以下爭議點…後續建議進行專家鑑定…費用預估…",
+                    humor: "勞資糾紛這種事，我們見過不少。不過別急，通常談一談都能解決，很少會鬧到法院。",
+                    technical: "案件分類：勞資爭議 ; 涉及法條：勞基法第 XX 條 ; 舉證責任：申訴人 ; 時效：2 年…",
+                    coaching: "面對勞資糾紛確實令人困擾，但別失望。我會和你一起梳理清楚每個細節，找到最公平的解決方案。",
+                    warning: "【緊急提醒】本案件涉及重大勞資爭議，務必於 7 天內提交完整證據。逾期將喪失部分權利。"
+                }
+            },
+            emergency: {
+                title: "緊急停業公告",
+                description: "因系統故障需要暫停服務",
+                tones: {
+                    formal: "由於系統技術維護，本服務將自即日起暫停，預計於 XX 日恢復。造成不便，敬請見諒。",
+                    warm: "各位夥伴，今天有點特殊狀況，我們需要暫停服務來進行緊急維修。預計明天上午就能恢復！感謝你的耐心！",
+                    cautious: "由於系統偵測到異常，根據安全規範，我們必須立即停止服務進行全面檢查。預計維修時間…",
+                    humor: "咦，我們的系統有點累了，需要休息一下。別擔心，給它充充電，明天就活蹦亂跳啦！",
+                    technical: "系統維護公告：停服時間 XX:XX-XX:XX，涉及服務：API、Web、Mobile。預計恢復時間…",
+                    coaching: "我們知道停服對你造成了困擾。相信我，這次維護會讓服務更穩定、更好用。謝謝你的陪伴！",
+                    warning: "【緊急停服通知】系統檢測到嚴重故障，為保護用戶數據安全，所有服務已立即關閉。禁止強制訪問。"
+                }
+            },
+            motivation: {
+                title: "年度激勵文案",
+                description: "激勵全公司員工開啟新年度",
+                tones: {
+                    formal: "各位同仁，新年度伊始，謹向各位致謝。期盼大家秉持專業精神，共同達成公司目標。",
+                    warm: "大家好！新的一年來了，我們要一起做點不一樣的事。我對你們的潛力充滿信心，讓我們衝！🚀",
+                    cautious: "根據過年度績效統計，我們達成了目標的 95%。本年度目標設定如下…預期達成指標…",
+                    humor: "新年新希望，與其定一堆不切實際的目標，不如定一個真的做得到的。今年，我們來點不一樣的！",
+                    technical: "2025 年度關鍵指標：營收成長 20% ; 客戶滿意度 >95% ; 員工離職率 <5%…",
+                    coaching: "我看見你們去年的努力，每一份堅持我都看在眼裡。今年，讓我們一起創造更多奇蹟。我相信你們可以做得更好！",
+                    warning: "【績效標準提醒】新年度績效要求提高 25%，所有未達標部門將面臨人事調整。務必立即制定行動計畫。"
+                }
+            }
+        };
+        
+        const toneConfig = [
+            { key: 'formal', label: '正式專業型', color: 'formal', icon: '📋' },
+            { key: 'warm', label: '親切積極型', color: 'warm', icon: '❤️' },
+            { key: 'cautious', label: '謹慎理性型', color: 'cautious', icon: '⚖️' },
+            { key: 'humor', label: '輕鬆幽默型', color: 'humor', icon: '😄' },
+            { key: 'technical', label: '冷靜技術型', color: 'technical', icon: '⚙️' },
+            { key: 'coaching', label: '鼓勵教練型', color: 'coaching', icon: '💪' },
+            { key: 'warning', label: '嚴肅警告型', color: 'warning', icon: '⚠️' }
+        ];
+        
+        function renderTones(taskKey) {
+            const task = taskData[taskKey];
+            const grid = document.getElementById('tonesGrid');
+            grid.innerHTML = '';
+            
+            toneConfig.forEach(config => {
+                const example = task.tones[config.key];
+                const card = document.createElement('div');
+                card.className = `tone-card ${config.color}`;
+                
+                card.innerHTML = `
+                    <div class="tone-header">
+                        ${config.icon} ${config.label}
+                    </div>
+                    <div class="tone-body">
+                        <div class="tone-example">${example}</div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        // 初始化
+        document.getElementById('taskSelect').addEventListener('change', (e) => {
+            renderTones(e.target.value);
+        });
+        
+        renderTones('complaint');
+    </script>
+</body>
+</html>
